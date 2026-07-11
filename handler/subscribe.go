@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -19,7 +20,19 @@ func SubscribeHandler(cfg *config.Config) gin.HandlerFunc {
 
 
 		token := c.Param("token")
+		
+if len(token) < 5 {
 
+	c.JSON(
+		400,
+		gin.H{
+			"error":"invalid token",
+		},
+	)
+
+	return
+
+}
 
 
 		if token == "" {
@@ -81,7 +94,14 @@ func SubscribeHandler(cfg *config.Config) gin.HandlerFunc {
 
 
 
-		resp, err := http.DefaultClient.Do(req)
+		client := &http.Client{
+
+	Timeout: 10 * time.Second,
+
+}
+
+
+resp, err := client.Do(req)
 
 
 
