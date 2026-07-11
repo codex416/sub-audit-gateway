@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+
+subscription:
+  upstream: "https://example.com/subscription"
+
+
+telegram:
+  enable: false
+  bot_token: ""
+  chat_id: ""
+
+
+security:
+  max_ip_change: 10
+  blacklist_enable: true
