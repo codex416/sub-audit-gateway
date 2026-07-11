@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/codex416/sub-audit-gateway/config"
+	"github.com/codex416/sub-audit-gateway/admin"
 	"github.com/codex416/sub-audit-gateway/database"
 	"github.com/codex416/sub-audit-gateway/handler"
 	"github.com/codex416/sub-audit-gateway/middleware"
@@ -87,6 +88,10 @@ r.Use(
 		handler.SubscribeHandler(cfg),
 	)
 
+	r.GET(
+	    "/status",
+	    admin.StatusHandler(),
+    )
 
 
 	port := fmt.Sprintf(
