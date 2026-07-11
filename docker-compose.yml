@@ -5,11 +5,20 @@ services:
 
   sub-audit-gateway:
 
+
     build: .
+
 
     container_name: sub-audit-gateway
 
-    restart: always
+
+    restart: unless-stopped
+
+
+    env_file:
+
+      - .env
+
 
 
     ports:
@@ -17,8 +26,14 @@ services:
       - "8080:8080"
 
 
+
     volumes:
+
 
       - ./config:/app/config
 
+
       - ./data:/app/data
+
+
+      - ./logs:/app/logs
