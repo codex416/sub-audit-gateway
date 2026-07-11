@@ -8,6 +8,7 @@ import (
 )
 
 
+
 func AuditMiddleware() gin.HandlerFunc {
 
 
@@ -18,7 +19,10 @@ func AuditMiddleware() gin.HandlerFunc {
 
 
 
-		ip := c.ClientIP()
+		ip := GetClientIP(c)
+
+
+		ipVersion := IPVersion(ip)
 
 
 		userAgent := c.GetHeader("User-Agent")
@@ -32,17 +36,17 @@ func AuditMiddleware() gin.HandlerFunc {
 
 
 
+		status := c.Writer.Status()
+
+
 		duration := time.Since(start)
 
 
 
-		status := c.Writer.Status()
-
-
-
 		log.Printf(
-			"[AUDIT] IP=%s PATH=%s UA=%s STATUS=%d TIME=%s",
+			"[AUDIT] IP=%s VERSION=%s PATH=%s UA=%s STATUS=%d COST=%s",
 			ip,
+			ipVersion,
 			path,
 			userAgent,
 			status,
