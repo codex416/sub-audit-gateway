@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/codex416/sub-audit-gateway/config"
+	"github.com/codex416/sub-audit-gateway/notify"
 )
 
 
@@ -104,21 +105,27 @@ if len(token) < 5 {
 resp, err := client.Do(req)
 
 
-
-		if err != nil {
-
-
-			c.JSON(
-				502,
-				gin.H{
-					"error":"upstream unavailable",
-				},
-			)
+if err != nil {
 
 
-			return
+	notify.SendAlert(
+		cfg,
+		"订阅上游异常",
+		"真实订阅服务器无法访问",
+	)
 
-		}
+
+	c.JSON(
+		502,
+		gin.H{
+			"error":"upstream unavailable",
+		},
+	)
+
+
+	return
+
+}
 
 
 
