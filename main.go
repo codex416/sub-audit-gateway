@@ -44,17 +44,23 @@ func main() {
 
 	// 请求审计
 
-	r.Use(
-		middleware.AuditMiddleware(),
-	)
+r.Use(
+	middleware.AuditMiddleware(),
+)
 
 
+// 保存数据库
 
-	// 保存数据库
+r.Use(
+	middleware.SaveAuditMiddleware(),
+)
 
-	r.Use(
-		middleware.SaveAuditMiddleware(),
-	)
+
+// IP限流
+
+r.Use(
+	middleware.RateLimitMiddleware(),
+)
 
 
 
