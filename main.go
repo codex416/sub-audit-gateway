@@ -8,6 +8,7 @@ import (
 
 	"github.com/codex416/sub-audit-gateway/config"
 	"github.com/codex416/sub-audit-gateway/handler"
+	"github.com/codex416/sub-audit-gateway/middleware"
 )
 
 
@@ -26,6 +27,10 @@ func main() {
 
 
 	r := gin.Default()
+
+
+	// 开启访问审计
+	r.Use(middleware.AuditMiddleware())
 
 
 
@@ -49,7 +54,7 @@ func main() {
 
 
 
-	// 订阅代理入口
+	// 订阅代理
 
 	r.GET("/sub/:token",
 		handler.SubscribeHandler(cfg),
