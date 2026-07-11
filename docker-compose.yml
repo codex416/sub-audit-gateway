@@ -1,0 +1,24 @@
+version: "3.9"
+
+
+services:
+
+  sub-audit-gateway:
+
+    build: .
+
+    container_name: sub-audit-gateway
+
+    restart: always
+
+
+    ports:
+
+      - "8080:8080"
+
+
+    volumes:
+
+      - ./config:/app/config
+
+      - ./data:/app/data
