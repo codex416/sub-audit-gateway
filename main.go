@@ -60,7 +60,7 @@ r.Use(
 // IP限流
 
 r.Use(
-	middleware.RateLimitMiddleware(),
+	middleware.RateLimitMiddleware(cfg),
 )
 
 
