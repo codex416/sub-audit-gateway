@@ -33,7 +33,9 @@ func SaveAuditMiddleware() gin.HandlerFunc {
 			IP: GetClientIP(c),
 
 			UserAgent: c.GetHeader("User-Agent"),
-
+			
+            Client: DetectClient(c.GetHeader("User-Agent")),
+			
 			Path: c.Request.URL.Path,
 
 			Status: c.Writer.Status(),
