@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/codex416/sub-audit-gateway/config"
+	"github.com/codex416/sub-audit-gateway/database"
 	"github.com/codex416/sub-audit-gateway/handler"
 	"github.com/codex416/sub-audit-gateway/middleware"
 )
@@ -26,15 +27,36 @@ func main() {
 
 
 
+	err = database.InitDatabase()
+
+
+	if err != nil {
+
+		log.Fatal("Database init failed:", err)
+
+	}
+
+
+
 	r := gin.Default()
 
 
-	// 开启访问审计
-	r.Use(middleware.AuditMiddleware())
+
+	// 请求审计
+
+	r.Use(
+		middleware.AuditMiddleware(),
+	)
 
 
 
-	// 健康检查
+	// 保存数据库
+
+	r.Use(
+		middleware.SaveAuditMiddleware(),
+	)
+
+
 
 	r.GET("/", func(c *gin.Context) {
 
@@ -54,15 +76,17 @@ func main() {
 
 
 
-	// 订阅代理
-
-	r.GET("/sub/:token",
+	r.GET(
+		"/sub/:token",
 		handler.SubscribeHandler(cfg),
 	)
 
 
 
-	port := fmt.Sprintf(":%d", cfg.Server.Port)
+	port := fmt.Sprintf(
+		":%d",
+		cfg.Server.Port,
+	)
 
 
 
