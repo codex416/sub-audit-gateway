@@ -6,6 +6,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/codex416/sub-audit-gateway/config"
+	"github.com/codex416/sub-audit-gateway/notify"
 )
 
 
@@ -28,7 +31,7 @@ var (
 
 
 
-func RateLimitMiddleware() gin.HandlerFunc {
+func RateLimitMiddleware(cfg *config.Config) gin.HandlerFunc {
 
 
 	return func(c *gin.Context) {
@@ -97,22 +100,30 @@ func RateLimitMiddleware() gin.HandlerFunc {
 		if v.count > 60 {
 
 
-			c.AbortWithStatusJSON(
-
-				http.StatusTooManyRequests,
-
-				gin.H{
-
-					"error":"too many requests",
-
-				},
-
-			)
+	notify.SendAlert(
+		cfg,
+		"IP访问超限",
+		"IP: "+ip+" 请求频率超过限制",
+	)
 
 
-			return
 
-		}
+	c.AbortWithStatusJSON(
+
+		http.StatusTooManyRequests,
+
+		gin.H{
+
+			"error":"too many requests",
+
+		},
+
+	)
+
+
+	return
+
+}
 
 
 
