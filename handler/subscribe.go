@@ -11,6 +11,7 @@ import (
 )
 
 
+
 func SubscribeHandler(cfg *config.Config) gin.HandlerFunc {
 
 
@@ -20,13 +21,17 @@ func SubscribeHandler(cfg *config.Config) gin.HandlerFunc {
 		token := c.Param("token")
 
 
+
 		if token == "" {
 
-			c.JSON(400, gin.H{
 
-				"error": "missing token",
+			c.JSON(
+				400,
+				gin.H{
+					"error":"missing token",
+				},
+			)
 
-			})
 
 			return
 
@@ -41,40 +46,82 @@ func SubscribeHandler(cfg *config.Config) gin.HandlerFunc {
 
 
 
-		url := upstream + "/" + token
+		target := upstream + "/" + token
 
 
 
-		resp, err := http.Get(url)
+		req, err := http.NewRequest(
+			"GET",
+			target,
+			nil,
+		)
 
 
 		if err != nil {
 
-			c.JSON(502, gin.H{
-
-				"error": "upstream unavailable",
-
-			})
+			c.JSON(
+				500,
+				gin.H{
+					"error":"create request failed",
+				},
+			)
 
 			return
 
 		}
+
+
+
+		// 转发客户端信息
+
+		req.Header.Set(
+			"User-Agent",
+			c.GetHeader("User-Agent"),
+		)
+
+
+
+		resp, err := http.DefaultClient.Do(req)
+
+
+
+		if err != nil {
+
+
+			c.JSON(
+				502,
+				gin.H{
+					"error":"upstream unavailable",
+				},
+			)
+
+
+			return
+
+		}
+
 
 
 		defer resp.Body.Close()
 
 
 
-		body, err := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(
+			resp.Body,
+		)
+
 
 
 		if err != nil {
 
-			c.JSON(500, gin.H{
 
-				"error": "read failed",
+			c.JSON(
+				500,
+				gin.H{
+					"error":"read response failed",
+				},
+			)
 
-			})
 
 			return
 
@@ -82,14 +129,25 @@ func SubscribeHandler(cfg *config.Config) gin.HandlerFunc {
 
 
 
+		// 保留订阅信息头
+
+		if value := resp.Header.Get("subscription-userinfo"); value != "" {
+
+
+			c.Header(
+				"subscription-userinfo",
+				value,
+			)
+
+
+		}
+
+
+
 		c.Data(
-
 			resp.StatusCode,
-
 			"text/plain; charset=utf-8",
-
 			body,
-
 		)
 
 
