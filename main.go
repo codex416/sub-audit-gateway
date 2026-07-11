@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/codex416/sub-audit-gateway/config"
+	"github.com/codex416/sub-audit-gateway/handler"
 )
 
 
@@ -23,9 +24,12 @@ func main() {
 	}
 
 
+
 	r := gin.Default()
 
 
+
+	// 健康检查
 
 	r.GET("/", func(c *gin.Context) {
 
@@ -45,14 +49,25 @@ func main() {
 
 
 
+	// 订阅代理入口
+
+	r.GET("/sub/:token",
+		handler.SubscribeHandler(cfg),
+	)
+
+
+
 	port := fmt.Sprintf(":%d", cfg.Server.Port)
 
 
-	fmt.Println("Sub Audit Gateway running", port)
+
+	fmt.Println(
+		"Sub Audit Gateway running",
+		port,
+	)
 
 
 
 	r.Run(port)
-
 
 }
