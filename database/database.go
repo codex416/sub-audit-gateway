@@ -14,7 +14,7 @@ func InitDatabase() error {
 
 
 	db, err := gorm.Open(
-		sqlite.Open("audit.db"),
+		sqlite.Open("/app/data/audit.db"),
 		&gorm.Config{},
 	)
 
